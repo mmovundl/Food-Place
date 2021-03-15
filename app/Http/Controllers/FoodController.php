@@ -15,7 +15,8 @@ class FoodController extends Controller
      */
     public function index()
     {
-        return view('food.index');
+        $foods = Food::latest()->get();
+        return view('food.index',compact('foods'));
     }
 
     /**
@@ -37,6 +38,26 @@ class FoodController extends Controller
     public function store(Request $request)
     {
         //
+        $this->validate($request,[
+            'name' => 'required',
+            'description'=>'required',
+            'price'=>'required|integer',
+            'category'=>'required',
+            'image'=>'required|mimes:jpeg,png,jpg'
+        ]);
+        //Adding image to database
+        $image=$request->file('image');
+        $name = time().'.'.$image->getClientOriginalExtension();//creates the name to save to the database
+        $destinationPath = public_path('/images');
+       $image->move($destinationPath,$name);
+        Food::create([
+            'name' => $request->get('name'),
+            'description'=>$request->get('description'),
+            'price'=>$request->get('price'),
+            'category_id'=>$request->get('category'),
+            'image'=>$name
+        ]);
+        return redirect()->back()->with('message','Food Created');
     }
 
     /**
@@ -59,6 +80,8 @@ class FoodController extends Controller
     public function edit($id)
     {
         //
+        $food = Food::find($id);
+        return view('food.edit',compact(['food']));
     }
 
     /**

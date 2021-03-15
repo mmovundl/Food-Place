@@ -12,7 +12,7 @@
                 @csrf
                {{ method_field("PUT")}}
             <div class="card">
-                <div class="card-header">Edit Category</div>
+                
 
                 <div class="card-body">
                    <div class="form-group">
